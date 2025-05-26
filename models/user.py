@@ -34,6 +34,9 @@ class User(Base):
             session.commit()
             return True
         return False
+    
+    def email_provider(self):
+        return self.email.split('@')[-1] if '@' in self.email else None
 
     
 
