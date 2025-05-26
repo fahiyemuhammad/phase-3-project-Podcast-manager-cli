@@ -4,7 +4,7 @@ from sqlalchemy.orm import relationship
 
 class User(Base):
     __tablename__ = 'users'
-    podcasts = relationship("Podcacst", back_populates="user", cascade="all, delete")
+    podcasts = relationship("Podcast", back_populates="user", cascade="all, delete")
 
     id = Column(Integer, primary_key=True) 
     name = Column(String, nullable=False)
