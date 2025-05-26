@@ -1,0 +1,26 @@
+from sqlalchemy import Column, String, Integer, ForeignKey
+from sqlalchemy.orm import relationship
+from database.setup import Base, session
+
+
+class Podcast(Base):
+    __tablename__ = 'podcasts'
+
+    id = Column(Integer, primary_key=True)
+    title = Column(String, nullable=False)
+    genre = Column(String)
+    user_id = Column(Integer, ForeignKey('user.id'), nullable=False)
+
+
+    user = relationship("User", back_populates="podcasts")
+
+    def __repr__(self):
+        return f"<Podcast(id={self.id}, title='self.title', genre='{self.genre}')"
+    
+
+    @classmethod
+    def create_podcast(cls,title,genre,user_id):
+        podcast = cls(title=title, genre=genre, user_id=user_id)
+        session.add(podcast)
+        session.commit()
+        return podcast
