@@ -24,3 +24,20 @@ class Podcast(Base):
         session.add(podcast)
         session.commit()
         return podcast
+    
+    @classmethod
+    def get_all(cls):
+        return session.query(cls).all()
+    
+    @classmethod
+    def find_by_id(cls, podcast_id):
+        return session.query(cls).filter_by(id=podcast_id).first()
+    
+    @classmethod
+    def delete_by_id(cls, podcast_id):
+        podcast = cls.find_by_id(podcast_id)
+        if podcast:
+            session.delete(podcast)
+            session.commit()
+            return True
+        return False
