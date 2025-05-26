@@ -26,6 +26,15 @@ class User(Base):
     def find_by_id(cls,user_id):
         return session.query(cls).filter_by(id=user_id).first()
     
+    @classmethod
+    def delete_by_id(cls,user_id):
+        user = cls.find_by_id(user_id)
+        if user:
+            session.delete(user)
+            session.commit()
+            return True
+        return False
+
     
 
 
