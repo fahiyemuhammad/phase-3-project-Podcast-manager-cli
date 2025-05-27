@@ -9,13 +9,13 @@ class Podcast(Base):
     id = Column(Integer, primary_key=True)
     title = Column(String, nullable=False)
     genre = Column(String)
-    user_id = Column(Integer, ForeignKey('user.id'), nullable=False)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
 
 
     user = relationship("User", back_populates="podcasts")
 
     def __repr__(self):
-        return f"<Podcast(id={self.id}, title='self.title', genre='{self.genre}')"
+        return f"<Podcast(id={self.id}, title={self.title}, genre='{self.genre}')"
     
 
     @classmethod
@@ -41,3 +41,10 @@ class Podcast(Base):
             session.commit()
             return True
         return False
+    
+    def save(self):
+        session.add(self)
+        session.commit()
+
+    def update(self, title=None, genre=None, user_id=None):
+        pass    

@@ -23,10 +23,10 @@ def main_menu():
 
 def user_menu():
     while True:
-        print("\n User Menu")
+        print("\n👤 User Menu")
         print("1. Create User")
         print("2. Delete User") 
-        print("3. View all Users")
+        print("3. View All Users")
         print("4. Find User by ID")                   
         print("5. View User's Podcasts")
         print("6. Back to Main Menu")
@@ -38,39 +38,47 @@ def user_menu():
             email = input("Enter user's email: ").strip()
             try:
                 user = User.create_user(name, email)
-                print(f"Created user: {user}")
+                print(f"✅ Created user: {user}")
             except Exception as e:
-                print(f"Error: {e}")
+                print(f"❌ Error: {e}")
 
         elif choice == "2":
-            user_id = input("Enter user ID to delete: ").strip
-            if User.delete_by_id(user_id):
-                print("User deleted.")
-            else:
-                print("User not found.")
+            try:
+                user_id = int(input("Enter user ID to delete: ").strip())
+                if User.delete_by_id(user_id):
+                    print("✅ User deleted.")
+                else:
+                    print("❌ User not found.")
+            except ValueError:
+                print("❌ Invalid ID. Please enter a number.")
+
         elif choice == "3":
             users = User.get_all()
             for user in users:
                 print(user)
-        elif choice == "4":
-            user_id = input("Enter user ID: ").strip()
-            user = User.find_by_id(user_id)
-            if user:
-                print(user)
-            else:
-                print("User not found.")  
-        elif choice == "5":
-            user_id = input("Enter user ID: ").strip()
-            user = User.find_by_id(user_id)
-            if user:
-                if user.podcasts:
-                    for p in user.podcasts:
-                        print(p)
-                else:
-                    print("ℹ️ This user has no podcasts.")  
 
-            else:
-                print("❌ User not found.")
+        elif choice == "4":
+            try:
+                user_id = int(input("Enter user ID: ").strip())
+                user = User.find_by_id(user_id)
+                print(user if user else "❌ User not found.")
+            except ValueError:
+                print("❌ Invalid ID. Please enter a number.")
+
+        elif choice == "5":
+            try:
+                user_id = int(input("Enter user ID: ").strip())
+                user = User.find_by_id(user_id)
+                if user:
+                    if user.podcasts:
+                        for p in user.podcasts:
+                            print(p)
+                    else:
+                        print("ℹ️ This user has no podcasts.")
+                else:
+                    print("❌ User not found.")
+            except ValueError:
+                print("❌ Invalid ID. Please enter a number.")
 
         elif choice == "6":
             break
@@ -84,49 +92,72 @@ def podcast_menu():
         print("1. Create Podcast")            
         print("2. Delete Podcast")            
         print("3. View All Podcasts")            
-        print("4. Find Podcast by ID")            
-        print("5. Back to Main Menu") 
+        print("4. Find Podcast by ID")
+        print("5. Update Podcast")            
+        print("6. Back to Main Menu") 
 
-        choice = input("Choose an option (1-5): ").strip()
+        choice = input("Choose an option (1-6): ").strip()
 
         if choice == "1":
             title = input("Enter podcast title: ").strip()
             genre = input("Enter genre: ").strip()
-            user_id = input("Enter user ID (owner): ").strip()
             try:
+                user_id = int(input("Enter user ID (owner): ").strip())
                 podcast = Podcast.create_podcast(title, genre, user_id)
                 print(f"✅ Created podcast: {podcast}")
+            except ValueError:
+                print("❌ Invalid user ID. Please enter a number.")
             except Exception as e:
-                print(f"❌ Error: {e}")    
+                print(f"❌ Error: {e}")
 
         elif choice == "2":
-            podcast_id = input("Enter podcast ID to delete: ").strip()
-            if podcast.delete_by_id(podcast_id):
-                print("Podcast Deleted.")
-            else:
-                print("❌ Podcast not found.")    
+            try:
+                podcast_id = int(input("Enter podcast ID to delete: ").strip())
+                if Podcast.delete_by_id(podcast_id):
+                    print("✅ Podcast deleted.")
+                else:
+                    print("❌ Podcast not found.")
+            except ValueError:
+                print("❌ Invalid podcast ID. Please enter a number.")
 
-        elif choice ==  "3":
+        elif choice == "3":
             podcasts = Podcast.get_all()
             for podcast in podcasts:
                 print(podcast)
 
         elif choice == "4":
-            podcast_id = input("Enter podcast ID: ").strip()
-            podcast = Podcast.find_by_id(podcast_id)
-            if podcast:
-                print(podcast)
-            else:
-                print("❌ Podcast not found.")  
+            try:
+                podcast_id = int(input("Enter podcast ID: ").strip())
+                podcast = Podcast.find_by_id(podcast_id)
+                print(podcast if podcast else "❌ Podcast not found.")
+            except ValueError:
+                print("❌ Invalid podcast ID. Please enter a number.")
 
         elif choice == "5":
+                podcast_id = int(input("Enter the podcast ID you wish to update: ").strip())
+                podcast = Podcast.find_by_id(podcast_id)
+                if podcast:
+                    print(f"Current title: {podcast.title}")
+                    print(f"Current genre: {podcast.genre}")
+                    new_title = input("Enter new title (or press enter to keep current): ").strip()
+                    new_genre = input("Enter new genre (or press enter to keep current) ").strip()
+
+                    if new_title:
+                        podcast.title = new_title
+                    if new_genre:
+                        podcast.genre = new_genre
+
+
+                    try:
+                        podcast.save()
+                        print("✅ Podcast updated successfully!")
+                    except Exception as e:
+                        print(f"❌ Error updating podcast: {e}") 
+
+                else:
+                    print("❌ Podcast not found.")             
+
+        elif choice == "6":
             break
         else:
             print("❌ Invalid input. Try again.")
-                       
-
-
-
-
-
-            
