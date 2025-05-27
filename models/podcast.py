@@ -13,6 +13,7 @@ class Podcast(Base):
 
 
     user = relationship("User", back_populates="podcasts")
+    episodess = relationship("Episode", back_populates="podcast", cascade="all, delete")
 
     def __repr__(self):
         return f"<Podcast(id={self.id}, title={self.title}, genre='{self.genre}')"
@@ -47,4 +48,11 @@ class Podcast(Base):
         session.commit()
 
     def update(self, title=None, genre=None, user_id=None):
-        pass    
+        if title:
+            self.title = title
+        if genre:
+            self.genre = genre
+        if user_id:
+            self.user_id = user_id
+        session.commit()
+                        

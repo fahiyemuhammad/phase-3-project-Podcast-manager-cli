@@ -1,5 +1,6 @@
 from models.user import User
 from models.podcast import Podcast
+from tabulate import tabulate
 
 def main_menu():
     while True:
@@ -54,8 +55,11 @@ def user_menu():
 
         elif choice == "3":
             users = User.get_all()
-            for user in users:
-                print(user)
+            if users:
+                table = [[user.id, user.name, user.email] for user in users]
+                print(tabulate(table, headers=["ID", "Name", "Email"], tablefmt="fancy_grid"))
+            else:
+                print("ℹ️ No users found")    
 
         elif choice == "4":
             try:
@@ -71,8 +75,8 @@ def user_menu():
                 user = User.find_by_id(user_id)
                 if user:
                     if user.podcasts:
-                        for p in user.podcasts:
-                            print(p)
+                        table = [[p.id, p.title, p.genre] for p in user.podcasts]
+                        print(tabulate(table, headers=["ID", "Title", "Genre"], tablefmt="fancy_grid"))
                     else:
                         print("ℹ️ This user has no podcasts.")
                 else:
@@ -93,7 +97,7 @@ def podcast_menu():
         print("2. Delete Podcast")            
         print("3. View All Podcasts")            
         print("4. Find Podcast by ID")
-        print("5. Update Podcast")            
+        print("5. Update Podcast")         
         print("6. Back to Main Menu") 
 
         choice = input("Choose an option (1-6): ").strip()
@@ -122,8 +126,11 @@ def podcast_menu():
 
         elif choice == "3":
             podcasts = Podcast.get_all()
-            for podcast in podcasts:
-                print(podcast)
+            if podcasts:
+                table = [[p.id, p.title, p.genre, p.user_id] for p in podcasts]
+                print(tabulate(table, headers=["ID", "Title", "Genre", "User_ID"], tablefmt="fancy_grid"))
+            else:
+                print("ℹ️ No podcasts found.")    
 
         elif choice == "4":
             try:
@@ -133,29 +140,28 @@ def podcast_menu():
             except ValueError:
                 print("❌ Invalid podcast ID. Please enter a number.")
 
+        
         elif choice == "5":
-                podcast_id = int(input("Enter the podcast ID you wish to update: ").strip())
-                podcast = Podcast.find_by_id(podcast_id)
-                if podcast:
-                    print(f"Current title: {podcast.title}")
-                    print(f"Current genre: {podcast.genre}")
-                    new_title = input("Enter new title (or press enter to keep current): ").strip()
-                    new_genre = input("Enter new genre (or press enter to keep current) ").strip()
+            podcast_id = int(input("Enter podcast ID to edit: ").strip())
+            podcast = Podcast.find_by_id(podcast_id)
 
-                    if new_title:
-                        podcast.title = new_title
-                    if new_genre:
-                        podcast.genre = new_genre
+            if podcast:
+                print(f"Editing: {podcast}")
+                new_title = input("New title (press Enter to keep current): ").strip()
+                new_genre = input("New genre (press Enter to keep current): ").strip()
+                new_user_id = int(input("New user ID (press Enter to keep current): ").strip())
+                
+                podcast.update(
+                    title = new_title if new_title else None,
+                    genre = new_genre if new_genre else None,
+                    user_id = new_user_id if new_user_id else None
+                )
 
+                print("✅ Podcast updated successfully.")
 
-                    try:
-                        podcast.save()
-                        print("✅ Podcast updated successfully!")
-                    except Exception as e:
-                        print(f"❌ Error updating podcast: {e}") 
+            else:
+                print("❌ Podcast not found.")
 
-                else:
-                    print("❌ Podcast not found.")             
 
         elif choice == "6":
             break
