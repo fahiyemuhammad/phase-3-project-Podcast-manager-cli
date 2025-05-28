@@ -1,7 +1,6 @@
 from sqlalchemy import Column, String, Integer, ForeignKey
 from sqlalchemy.orm import relationship
 from database.setup import Base, session
-from models.episodes import Episode
 
 
 class Podcast(Base):
@@ -14,7 +13,7 @@ class Podcast(Base):
 
 
     user = relationship("User", back_populates="podcasts")
-    episodes = relationship("Episode", back_populates="podcasts", cascade="all, delete-orphan")
+    episodes = relationship("Episode", back_populates="podcast", cascade="all, delete-orphan")
 
 
     def __repr__(self):
