@@ -20,7 +20,7 @@ def main_menu():
         elif choice == "3":
             episode_menu()
         elif choice == "4":
-            print("Goodbye! 👋🏻")
+            print("Goodbye! 👋")
             break
         else:
             print("ℹ️ Invalid input. Please try again.")
@@ -87,6 +87,7 @@ def user_menu():
             try:
                 user_id = int(input("Enter user ID: "))
                 user = User.find_by_id(user_id)
+                
                 if user:
                     if user.podcasts:
                         table = [[p.id, p.title, p.genre] for p in user.podcasts]
@@ -216,7 +217,7 @@ def episode_menu():
                 table = [[ep.id, 
                           ep.title, 
                           f"{ep.duration} mins" if ep.duration else "N/A", 
-                          "✅" if ep.listened else "ℹ️", 
+                          "✅" if ep.listened else "❌", 
                           ep.rating if 1 <= ep.rating <= 10 else "Please enter a rating within the range 1-10", 
                           ep.note if ep.note else "No note",
                           ep.podcast_id
