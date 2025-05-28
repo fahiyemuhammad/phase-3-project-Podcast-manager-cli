@@ -78,7 +78,7 @@ def user_menu():
             try:
                 user_id = int(input("Enter user ID: "))
                 user = User.find_by_id(user_id)
-                table = [[u] for u in user]
+                table = [[user.id, user.name, user.email]]
                 print(tabulate(table, headers = ["ID", "Name", "Email"], tablefmt="fancy_grid") if user else "ℹ️ User not found.")
             except ValueError:
                 print("ℹ️ Invalid ID.")
@@ -124,7 +124,7 @@ def podcast_menu():
             try:
                 user_id = int(input("Enter user ID (owner): "))
                 podcast = Podcast.create_podcast(title, genre, user_id)
-                print(f"✅ Created podcast: {podcast}")
+                print("✅ Created podcast: ")
             except ValueError:
                 print("ℹ️ Invalid user ID.")
             except Exception as e:
@@ -133,7 +133,7 @@ def podcast_menu():
         elif choice == "2":
             try:
                 podcast_id = int(input("Enter podcast ID to delete: "))
-                confirm = input(f"Are you sure you want to delete Podcast {podcast.title}? y/n: ").strip().lower()
+                confirm = input(f"Are you sure you want to delete Podcast? y/n: ").strip().lower()
                 if confirm == "y" or confirm == "yes":
                     if Podcast.delete_by_id(podcast_id):
                         print("✅ Podcast deleted.")
