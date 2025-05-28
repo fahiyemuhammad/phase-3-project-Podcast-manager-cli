@@ -3,8 +3,6 @@ from models.podcast import Podcast
 from models.episodes import Episode
 from tabulate import tabulate
 
-
-
 def main_menu():
     while True:
         print("\n🎧 Podcast Manager Menu")
@@ -15,17 +13,17 @@ def main_menu():
 
         choice = input("Choose an option (1-4): ").strip()
 
-        if choice == "1":
+        if choice == "1":  
             user_menu()
         elif choice == "2":
             podcast_menu()
         elif choice == "3":
             episode_menu()
         elif choice == "4":
-            print("Goodbye! 👋")
+            print("Goodbye! 👋🏻")
             break
         else:
-            print("❌ Invalid input. Please try again.")
+            print("ℹ️ Invalid input. Please try again.")
 
 
 # ----------------------------- User Menu -----------------------------
@@ -48,7 +46,7 @@ def user_menu():
                 user = User.create_user(name, email)
                 print(f"✅ Created user: {user}")
             except Exception as e:
-                print(f"❌ Error: {e}")
+                print(f"ℹ️ Error: {e}")
 
         elif choice == "2":
             try:
@@ -58,15 +56,15 @@ def user_menu():
                     if User.delete_by_id(user_id):
                         print("✅ User deleted.")
                     else:
-                        print("❌ User not found.")
+                        print("ℹ️ User not found.")
                 elif confirmation == "n" or confirmation == "no":
-                    print("👍 Thank you for your confirmation. The user was not deleted!")                    
+                    print("Thank you for your confirmation 👍🏻. The user was not deleted!")                    
                     continue
                 else:
                     print("Please enter y or n ")
                     continue        
             except ValueError:
-                print("❌ Invalid ID.")
+                print("ℹ️ Invalid ID.")
 
         elif choice == "3":
             users = User.get_all()
@@ -81,9 +79,9 @@ def user_menu():
                 user_id = int(input("Enter user ID: "))
                 user = User.find_by_id(user_id)
                 table = [[u] for u in user]
-                print(tabulate(table, headers = ["ID", "Name", "Email"], tablefmt="fancy_grid") if user else "❌ User not found.")
+                print(tabulate(table, headers = ["ID", "Name", "Email"], tablefmt="fancy_grid") if user else "ℹ️ User not found.")
             except ValueError:
-                print("❌ Invalid ID.")
+                print("ℹ️ Invalid ID.")
 
         elif choice == "5":
             try:
@@ -96,14 +94,14 @@ def user_menu():
                     else:
                         print("ℹ️ This user has no podcasts.")
                 else:
-                    print("❌ User not found.")
+                    print("ℹ️ User not found.")
             except ValueError:
-                print("❌ Invalid ID.")
+                print("ℹ️ Invalid ID.")
 
         elif choice == "6":
             break
         else:
-            print("❌ Invalid input. Try again.")
+            print("ℹ️ Invalid input. Try again.")
 
 
 # ----------------------------- Podcast Menu -----------------------------
@@ -127,9 +125,9 @@ def podcast_menu():
                 podcast = Podcast.create_podcast(title, genre, user_id)
                 print(f"✅ Created podcast: {podcast}")
             except ValueError:
-                print("❌ Invalid user ID.")
+                print("ℹ️ Invalid user ID.")
             except Exception as e:
-                print(f"❌ Error: {e}")
+                print(f"ℹ️ Error: {e}")
 
         elif choice == "2":
             try:
@@ -137,9 +135,9 @@ def podcast_menu():
                 if Podcast.delete_by_id(podcast_id):
                     print("✅ Podcast deleted.")
                 else:
-                    print("❌ Podcast not found.")
+                    print("ℹ️ Podcast not found.")
             except ValueError:
-                print("❌ Invalid podcast ID.")
+                print("ℹ️ Invalid podcast ID.")
 
         elif choice == "3":
             podcasts = Podcast.get_all()
@@ -153,9 +151,9 @@ def podcast_menu():
             try:
                 podcast_id = int(input("Enter podcast ID: "))
                 podcast = Podcast.find_by_id(podcast_id)
-                print(podcast if podcast else "❌ Podcast not found.")
+                print(podcast if podcast else "ℹ️ Podcast not found.")
             except ValueError:
-                print("❌ Invalid podcast ID.")
+                print("ℹ️ Invalid podcast ID.")
 
         elif choice == "5":
             try:
@@ -173,14 +171,14 @@ def podcast_menu():
                     )
                     print("✅ Podcast updated.")
                 else:
-                    print("❌ Podcast not found.")
+                    print("ℹ️ Podcast not found.")
             except ValueError:
-                print("❌ Invalid ID.")
+                print("ℹ️ Invalid ID.")
 
         elif choice == "6":
             break
         else:
-            print("❌ Invalid input. Try again.")
+            print("ℹ️ Invalid input. Try again.")
 
 
 # ----------------------------- Episode Menu -----------------------------
@@ -202,7 +200,7 @@ def episode_menu():
             try:
                 duration = input("Enter duration (e.g., 25:30): ").strip()
             except:
-                print("❌ Invalid duration. Please enter a number.")
+                print("ℹ️ Invalid duration. Please enter a number.")
                 continue  
     
             try:
@@ -210,7 +208,7 @@ def episode_menu():
                 episode = Episode.create_episode(title, duration, podcast_id)
                 print(f"✅ Episode created: {episode}")
             except Exception as e:
-                print(f"❌ Error: {e}")
+                print(f"ℹ️ Error: {e}")
 
         elif choice == "2":
             episodes = Episode.get_all()
@@ -218,7 +216,7 @@ def episode_menu():
                 table = [[ep.id, 
                           ep.title, 
                           f"{ep.duration} mins" if ep.duration else "N/A", 
-                          "✅" if ep.listened else "❌", 
+                          "✅" if ep.listened else "ℹ️", 
                           ep.rating if 1 <= ep.rating <= 10 else "Please enter a rating within the range 1-10", 
                           ep.note if ep.note else "No note",
                           ep.podcast_id
@@ -231,7 +229,7 @@ def episode_menu():
             try:
                 podcast_id = int(input("Enter podcast ID to view episodes: ").strip())
             except ValueError:
-                print("❌ Invalid podcast ID.")
+                print("ℹ️ Invalid podcast ID.")
                 continue
 
             episodes = Episode.get_by_podcast(podcast_id)
@@ -246,7 +244,7 @@ def episode_menu():
             try:
                 episode_id = int(input("Enter episode ID: "))
             except ValueError:
-                print("❌ Invalid ID.")    
+                print("ℹ️ Invalid ID.")    
                 continue
 
             episode = Episode.find_by_id(episode_id)
@@ -255,14 +253,14 @@ def episode_menu():
                 episode.update(listened=(status == "yes"))
                 print("✅ Episode updated.")
             else:
-                print("❌ Episode not found.")
+                print("ℹ️ Episode not found.")
             
 
         elif choice == "5":
             try:
                 episode_id = int(input("Enter episode ID: ").strip())
             except ValueError:
-                print("❌ Invalid episode ID. Please enter a number.")
+                print("ℹ️ Invalid episode ID. Please enter a number.")
                 continue
 
             episode = Episode.find_by_id(episode_id)
@@ -275,11 +273,11 @@ def episode_menu():
                             break
                         rating = int(rating)
                         if rating < 1 or rating > 10:
-                            print("❌ Rating must be between 1 and 10.")
+                            print("ℹ️ Rating must be between 1 and 10.")
                             continue
                         break
                     except ValueError:
-                        print("❌ Invalid rating. Enter a number between 1 and 5.")
+                        print("ℹ️ Invalid rating. Enter a number between 1 and 5.")
 
                 note = input("Add a note (leave blank to skip): ").strip()
                 note = note if note else None
@@ -287,13 +285,13 @@ def episode_menu():
                 episode.update(rating=rating, note=note)
                 print("✅ Episode updated with rating and note.")
             else:
-                print("❌ Episode not found.")
+                print("ℹ️ Episode not found.")
 
         elif choice == "6":
             try:
                 episode_id = int(input("Enter episode ID to delete: ").strip())
             except ValueError:
-                print("❌ Invalid episode ID. Please enter a number.")
+                print("ℹ️ Invalid episode ID. Please enter a number.")
                 continue
 
             episode = Episode.find_by_id(episode_id)
@@ -303,13 +301,13 @@ def episode_menu():
                     if Episode.delete_by_id(episode_id):
                         print("✅ Episode deleted.")
                     else:
-                        print("❌ Could not delete episode.")
+                        print("ℹ️ Could not delete episode.")
                 else:
-                    print("❌ Deletion cancelled.")
+                    print("ℹ️ Deletion cancelled.")
             else:
-                print("❌ Episode not found.")
+                print("ℹ️ Episode not found.")
                 
         elif choice == "7":
             break
         else:
-            print("❌ Invalid input. Try again.")
+            print("ℹ️ Invalid input. Try again.")
