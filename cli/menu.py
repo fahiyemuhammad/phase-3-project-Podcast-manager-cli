@@ -31,10 +31,10 @@ def user_menu():
     while True:
         print("\n👤 User Menu")
         print("1. Create User")
-        print("2. Delete User")
-        print("3. View All Users")
+        print("2. View All Users")
+        print("3. View User's Podcasts")
         print("4. Find User by ID")
-        print("5. View User's Podcasts")
+        print("5. Delete User")
         print("6. Back to Main Menu")
 
         choice = input("Choose an option (1-6): ").strip()
@@ -49,6 +49,41 @@ def user_menu():
                 print(f"ℹ️ Error: {e}")
 
         elif choice == "2":
+            users = User.get_all()
+            if users:
+                table = [[u.id, u.name, u.email] for u in users]
+                print(tabulate(table, headers=["ID", "Name", "Email"], tablefmt="fancy_grid"))
+            else:
+                print("ℹ️ No users found.") 
+
+        elif choice == "3":
+            try:
+                user_id = int(input("Enter user ID: "))
+                user = User.find_by_id(user_id)
+                
+                if user:
+                    if user.podcasts:
+                        table = [[p.id, p.title, p.genre] for p in user.podcasts]
+                        print(tabulate(table, headers=["ID", "Title", "Genre"], tablefmt="fancy_grid"))
+                    else:
+                        print("ℹ️ This user has no podcasts.")
+                else:
+                    print("ℹ️ User not found.")
+            except ValueError:
+                print("ℹ️ Invalid ID.")
+
+
+        elif choice == "4":
+            try:
+                user_id = int(input("Enter user ID: "))
+                user = User.find_by_id(user_id)
+                table = [[user.id, user.name, user.email]]
+                print(tabulate(table, headers = ["ID", "Name", "Email"], tablefmt="fancy_grid") if user else "ℹ️ User not found.")
+            except ValueError:
+                print("ℹ️ Invalid ID.")  
+
+
+        elif choice == "5":
             try:
                 user_id = int(input("Enter user ID to delete: "))
                 confirm = input("Are you sure you want to delete the user? y/n: ").strip().lower()
@@ -66,39 +101,10 @@ def user_menu():
             except ValueError:
                 print("ℹ️ Invalid ID.")
 
-        elif choice == "3":
-            users = User.get_all()
-            if users:
-                table = [[u.id, u.name, u.email] for u in users]
-                print(tabulate(table, headers=["ID", "Name", "Email"], tablefmt="fancy_grid"))
-            else:
-                print("ℹ️ No users found.")
+       
 
-        elif choice == "4":
-            try:
-                user_id = int(input("Enter user ID: "))
-                user = User.find_by_id(user_id)
-                table = [[user.id, user.name, user.email]]
-                print(tabulate(table, headers = ["ID", "Name", "Email"], tablefmt="fancy_grid") if user else "ℹ️ User not found.")
-            except ValueError:
-                print("ℹ️ Invalid ID.")
 
-        elif choice == "5":
-            try:
-                user_id = int(input("Enter user ID: "))
-                user = User.find_by_id(user_id)
-                
-                if user:
-                    if user.podcasts:
-                        table = [[p.id, p.title, p.genre] for p in user.podcasts]
-                        print(tabulate(table, headers=["ID", "Title", "Genre"], tablefmt="fancy_grid"))
-                    else:
-                        print("ℹ️ This user has no podcasts.")
-                else:
-                    print("ℹ️ User not found.")
-            except ValueError:
-                print("ℹ️ Invalid ID.")
-
+        
         elif choice == "6":
             break
         else:
