@@ -51,14 +51,14 @@ def user_menu():
         elif choice == "2":
             try:
                 user_id = int(input("Enter user ID to delete: "))
-                confirmation = input("Are you sure you want to delete the user? y/n: ").strip().lower()
-                if confirmation == "y" or confirmation == "yes":
+                confirm = input("Are you sure you want to delete the user? y/n: ").strip().lower()
+                if confirm == "y" or confirm == "yes":
                     if User.delete_by_id(user_id):
                         print("✅ User deleted.")
                     else:
                         print("ℹ️ User not found.")
-                elif confirmation == "n" or confirmation == "no":
-                    print("Thank you for your confirmation 👍🏻. The user was not deleted!")                    
+                elif confirm == "n" or confirm == "no":
+                    print("Thank you for your confirmation 👍. The user was not deleted!")                    
                     continue
                 else:
                     print("Please enter y or n ")
@@ -133,10 +133,17 @@ def podcast_menu():
         elif choice == "2":
             try:
                 podcast_id = int(input("Enter podcast ID to delete: "))
-                if Podcast.delete_by_id(podcast_id):
-                    print("✅ Podcast deleted.")
+                confirm = input(f"Are you sure you want to delete Podcast {podcast.title}? y/n: ").strip().lower()
+                if confirm == "y" or confirm == "yes":
+                    if Podcast.delete_by_id(podcast_id):
+                        print("✅ Podcast deleted.")
+                    else:
+                        print("ℹ️ Podcast not found.")
+                elif confirm == "n" or confirm == "no":
+                    print("Thank you for your confirmation 👍. The podcast was not deleted!")      
+                    continue
                 else:
-                    print("ℹ️ Podcast not found.")
+                    print("Please enter y or n")      
             except ValueError:
                 print("ℹ️ Invalid podcast ID.")
 
@@ -298,7 +305,7 @@ def episode_menu():
             episode = Episode.find_by_id(episode_id)
             if episode:
                 confirm = input(f"Are you sure you want to delete episode '{episode.title}'? (y/n): ").strip().lower()
-                if confirm == 'y':
+                if confirm == 'y' or confirm == "yes":
                     if Episode.delete_by_id(episode_id):
                         print("✅ Episode deleted.")
                     else:
