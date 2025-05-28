@@ -26,7 +26,8 @@ class User(Base):
     
     @classmethod
     def find_by_id(cls,user_id):
-        return session.query(cls).filter_by(id=user_id).first()
+        user = session.query(cls).filter_by(id=user_id).first()
+        return [user.name,user.id,user.email]
     
     @classmethod
     def delete_by_id(cls,user_id):

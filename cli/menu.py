@@ -53,10 +53,18 @@ def user_menu():
         elif choice == "2":
             try:
                 user_id = int(input("Enter user ID to delete: "))
-                if User.delete_by_id(user_id):
-                    print("✅ User deleted.")
+                confirmation = input("Are you sure you want to delete the user? y/n: ").strip().lower()
+                if confirmation == "y" or confirmation == "yes":
+                    if User.delete_by_id(user_id):
+                        print("✅ User deleted.")
+                    else:
+                        print("❌ User not found.")
+                elif confirmation == "n" or confirmation == "no":
+                    print("👍 Thank you for your confirmation. The user was not deleted!")                    
+                    continue
                 else:
-                    print("❌ User not found.")
+                    print("Please enter y or n ")
+                    continue        
             except ValueError:
                 print("❌ Invalid ID.")
 
@@ -72,7 +80,8 @@ def user_menu():
             try:
                 user_id = int(input("Enter user ID: "))
                 user = User.find_by_id(user_id)
-                print(user if user else "❌ User not found.")
+                table = [[u] for u in user]
+                print(tabulate(table, headers = ["ID", "Name", "Email"], tablefmt="fancy_grid") if user else "❌ User not found.")
             except ValueError:
                 print("❌ Invalid ID.")
 
