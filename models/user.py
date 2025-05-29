@@ -40,6 +40,16 @@ class User(Base):
     
     def email_provider(self):
         return self.email.split('@')[-1] if '@' in self.email else None
+    
+    def update_user(self, name=None, email = None):
+        if name is not None:
+            self.name = name
+        if email is not None:
+            self.email = email
+        session.commit()      
+        print(f"✅ User {self.id} updated successfully.")                
+  
+
 
     
 

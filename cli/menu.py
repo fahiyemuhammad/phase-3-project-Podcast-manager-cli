@@ -3,7 +3,7 @@ from models.podcast import Podcast
 from models.episodes import Episode
 from tabulate import tabulate
 
-def main_menu():
+def menu():
     while True:
         print("\n🎧 Podcast Manager Menu")
         print("1. Manage Users")
@@ -34,10 +34,11 @@ def user_menu():
         print("2. View All Users")
         print("3. View User's Podcasts")
         print("4. Find User by ID")
-        print("5. Delete User")
-        print("6. Back to Main Menu")
+        print("5. Update User")
+        print("6. Delete User")
+        print("7. Back to Main Menu")
 
-        choice = input("Choose an option (1-6): ").strip()
+        choice = input("Choose an option (1-7): ").strip()
 
         if choice == "1":
             name = input("Enter user's name: ").strip()
@@ -77,13 +78,30 @@ def user_menu():
             try:
                 user_id = int(input("Enter user ID: "))
                 user = User.find_by_id(user_id)
-                table = [[user.id, user.name, user.email]]
-                print(tabulate(table, headers = ["ID", "Name", "Email"], tablefmt="fancy_grid") if user else "ℹ️ User not found.")
+                if user:
+                    table = [[user.id, user.name, user.email]]
+                    print(tabulate(table, headers=["ID", "Name", "Email"], tablefmt="fancy_grid"))
+                else:
+                    print("ℹ️ User not found.")
             except ValueError:
-                print("ℹ️ Invalid ID.")  
-
+                print("ℹ️ Invalid ID.") 
 
         elif choice == "5":
+            try:
+                user_id = input("Enter the user ID you wish to Edit: ").strip()
+                user = User.find_by_id(user_id)
+                if user:
+                    new_name =  input(f"Enter a  new name for user with the id of '{user_id}' (Enter to skip): ").strip()
+                    new_email = input(f"Enter a new email for the user with the id of '{user_id}': (Enter to skip)").strip()
+                    user.update_user(new_name, new_email)
+                else: 
+                    print("ℹ️ User not found")
+            except ValueError:
+                print("ℹ️ Invalid ID")        
+
+
+
+        elif choice == "6":
             try:
                 user_id = int(input("Enter user ID to delete: "))
                 confirm = input("Are you sure you want to delete the user? y/n: ").strip().lower()
@@ -92,7 +110,7 @@ def user_menu():
                         print("✅ User deleted.")
                     else:
                         print("ℹ️ User not found.")
-                elif confirm == "n" or confirm == "no":
+                elif confirm in ("n", "no"):
                     print("Thank you for your confirmation 👍. The user was not deleted!")                    
                     continue
                 else:
@@ -105,7 +123,7 @@ def user_menu():
 
 
         
-        elif choice == "6":
+        elif choice == "7":
             break
         else:
             print("ℹ️ Invalid input. Try again.")
@@ -196,132 +214,155 @@ def podcast_menu():
 
 
 # ----------------------------- Episode Menu -----------------------------
+def parse_duration(duration_str):
+    try:
+        if ':' in duration_str:
+            minutes, seconds = map(int, duration_str.split(':'))
+            total_minutes = minutes + (seconds / 60)
+            return int(round(total_minutes))
+        else:
+            return int(duration_str)
+    except:
+        return None
+
 def episode_menu():
     while True:
-        print("\n🎬 Episode Menu")
+        print("\n🎧 Episode Menu")
         print("1. Create Episode")
-        print("2. View All Episodes")
-        print("3. View Episodes by Podcast")
-        print("4. Mark Episode as Listened/Unlistened")
-        print("5. Rate and Add Note to Episode")
-        print("6. Delete Episode")
-        print("7. Back to Main Menu")
+        print("2. Delete Episode")
+        print("3. View All Episodes")
+        print("4. Find Episode by ID")
+        print("5. Mark Episode Listened")
+        print("6. Rate Episode")
+        print("7. Add/Edit Note")
+        print("8. Update Episode")
+        print("9. Back to Main Menu")
 
-        choice = input("Choose an option (1-7): ").strip()
+        choice = input("Choose an option (1-9): ").strip()
 
         if choice == "1":
             title = input("Enter episode title: ").strip()
-            try:
-                duration = input("Enter duration (e.g., 25:30): ").strip()
-            except:
-                print("ℹ️ Invalid duration. Please enter a number.")
-                continue  
-    
+            duration_str = input("Enter duration (e.g., 25:30 or 25): ").strip()
+            duration = parse_duration(duration_str)
+            if duration is None:
+                print("ℹ️ Invalid duration format.")
+                continue
             try:
                 podcast_id = int(input("Enter podcast ID: "))
                 episode = Episode.create_episode(title, duration, podcast_id)
-                print(f"✅ Episode created: {episode}")
+                print(f"✅ Created episode: {episode}")
+            except ValueError:
+                print("ℹ️ Invalid podcast ID.")
             except Exception as e:
                 print(f"ℹ️ Error: {e}")
 
         elif choice == "2":
-            episodes = Episode.get_all()
-            if episodes:
-                table = [[ep.id, 
-                          ep.title, 
-                          f"{ep.duration} mins" if ep.duration else "N/A", 
-                          "✅" if ep.listened else "❌", 
-                          ep.rating if 1 <= ep.rating <= 10 else "Please enter a rating within the range 1-10", 
-                          ep.note if ep.note else "No note",
-                          ep.podcast_id
-                          ] for ep in episodes]
-                print(tabulate(table, headers=["ID", "Title", "Duration in mins", "Listened", "Rating", "Notes","Podcast ID"], tablefmt="fancy_grid"))
-            else:
-                print("ℹ️ No episodes found.")
+            try:
+                episode_id = int(input("Enter episode ID to delete: "))
+                confirm = input("Are you sure you want to delete episode? y/n: ").strip().lower()
+                if confirm in ("y", "yes"):
+                    if Episode.delete_by_id(episode_id):
+                        print("✅ Episode deleted.")
+                    else:
+                        print("ℹ️ Episode not found.")
+                elif confirm in ("n", "no"):
+                    print("Thank you for your confirmation 👍. The episode was not deleted!")        
+                else:
+                    print("Please enter y or n.")    
+            except ValueError:
+                print("ℹ️ Invalid episode ID.")
 
         elif choice == "3":
-            try:
-                podcast_id = int(input("Enter podcast ID to view episodes: ").strip())
-            except ValueError:
-                print("ℹ️ Invalid podcast ID.")
-                continue
-
-            episodes = Episode.get_by_podcast(podcast_id)
+            episodes = Episode.get_all()
             if episodes:
-                    table = [[ep.id, ep.title, ep.duration, ep.listened] for ep in episodes]
-                    print(tabulate(table, headers=["ID", "Title", "Duration", "Listened"], tablefmt="fancy_grid"))
+                table = [[e.id, e.title, e.duration, e.listened, e.rating, e.note, e.podcast_id] for e in episodes]
+                print(tabulate(table, headers=["ID", "Title", "Duration", "Listened", "Rating", "Note", "Podcast_ID"], tablefmt="fancy_grid"))
             else:
-                    print("ℹ️ No episodes for this podcast.")
-            
+                print("ℹ️ No episodes found.")
 
         elif choice == "4":
             try:
                 episode_id = int(input("Enter episode ID: "))
+                episode = Episode.find_by_id(episode_id)
+                print(episode if episode else "ℹ️ Episode not found.")
             except ValueError:
-                print("ℹ️ Invalid ID.")    
-                continue
-
-            episode = Episode.find_by_id(episode_id)
-            if episode:
-                status = input("Mark as listened? (yes/no): ").strip().lower()
-                episode.update(listened=(status == "yes"))
-                print("✅ Episode updated.")
-            else:
-                print("ℹ️ Episode not found.")
-            
+                print("ℹ️ Invalid episode ID.")
 
         elif choice == "5":
             try:
-                episode_id = int(input("Enter episode ID: ").strip())
+                episode_id = int(input("Enter episode ID to mark listened: "))
+                episode = Episode.find_by_id(episode_id)
+                if episode:
+                    episode.mark_listened()
+                    print("✅ Episode marked as listened.")
+                else:
+                    print("ℹ️ Episode not found.")
             except ValueError:
-                print("ℹ️ Invalid episode ID. Please enter a number.")
-                continue
-
-            episode = Episode.find_by_id(episode_id)
-            if episode:
-                while True:
-                    try:
-                        rating = input("Rate the episode (1-10, leave blank to skip): ").strip()
-                        if rating == "":
-                            rating = None
-                            break
-                        rating = int(rating)
-                        if rating < 1 or rating > 10:
-                            print("ℹ️ Rating must be between 1 and 10.")
-                            continue
-                        break
-                    except ValueError:
-                        print("ℹ️ Invalid rating. Enter a number between 1 and 5.")
-
-                note = input("Add a note (leave blank to skip): ").strip()
-                note = note if note else None
-
-                episode.update(rating=rating, note=note)
-                print("✅ Episode updated with rating and note.")
-            else:
-                print("ℹ️ Episode not found.")
+                print("ℹ️ Invalid episode ID.")
 
         elif choice == "6":
             try:
-                episode_id = int(input("Enter episode ID to delete: ").strip())
-            except ValueError:
-                print("ℹ️ Invalid episode ID. Please enter a number.")
-                continue
-
-            episode = Episode.find_by_id(episode_id)
-            if episode:
-                confirm = input(f"Are you sure you want to delete episode '{episode.title}'? (y/n): ").strip().lower()
-                if confirm == 'y' or confirm == "yes":
-                    if Episode.delete_by_id(episode_id):
-                        print("✅ Episode deleted.")
+                episode_id = int(input("Enter episode ID to rate: "))
+                episode = Episode.find_by_id(episode_id)
+                if episode:
+                    rating = int(input("Enter rating (1-10): "))
+                    if 1 <= rating <= 10:
+                        episode.update(rating=rating)
+                        print("✅ Episode rated.")
                     else:
-                        print("ℹ️ Could not delete episode.")
+                        print("ℹ️ Rating must be between 1 and 10.")
                 else:
-                    print("ℹ️ Deletion cancelled.")
-            else:
-                print("ℹ️ Episode not found.")
-                
+                    print("ℹ️ Episode not found.")
+            except ValueError:
+                print("ℹ️ Invalid input.")
+
         elif choice == "7":
+            try:
+                episode_id = int(input("Enter episode ID to add/edit note: "))
+                episode = Episode.find_by_id(episode_id)
+                if episode:
+                    note = input("Enter note: ").strip()
+                    episode.update(note=note)
+                    print("✅ Note updated.")
+                else:
+                    print("ℹ️ Episode not found.")
+            except ValueError:
+                print("ℹ️ Invalid episode ID.")
+
+        elif choice == "8":
+            try:
+                episode_id = int(input("Enter episode ID to update: "))
+                episode = Episode.find_by_id(episode_id)
+                if episode:
+                    print(f"Editing: {episode}")
+                    new_title = input("New title (Enter to skip): ").strip()
+                    new_duration_str = input("New duration (e.g., 25:30 or 25, Enter to skip): ").strip()
+                    new_duration = parse_duration(new_duration_str) if new_duration_str else None
+                    new_listened = input("Listened? (y/n, Enter to skip): ").strip().lower()
+                    new_listened_val = None
+                    if new_listened in ("y", "yes"):
+                        new_listened_val = True
+                    elif new_listened in ("n", "no"):
+                        new_listened_val = False
+                    new_rating_str = input("New rating (1-10, Enter to skip): ").strip()
+                    new_rating = int(new_rating_str) if new_rating_str.isdigit() else None
+                    new_note = input("New note (Enter to skip): ").strip()
+                    new_note_val = new_note if new_note else None
+
+                    episode.update(
+                        title=new_title or None,
+                        duration=new_duration,
+                        listened=new_listened_val,
+                        rating=new_rating,
+                        note=new_note_val
+                    )
+                    print("✅ Episode updated.")
+                else:
+                    print("ℹ️ Episode not found.")
+            except ValueError:
+                print("ℹ️ Invalid input.")
+
+        elif choice == "9":
             break
         else:
             print("ℹ️ Invalid input. Try again.")
