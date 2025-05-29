@@ -93,7 +93,15 @@ def user_menu():
                 if user:
                     new_name =  input(f"Enter a  new name for user with the id of '{user_id}' (Enter to skip): ").strip()
                     new_email = input(f"Enter a new email for the user with the id of '{user_id}': (Enter to skip)").strip()
-                    user.update_user(new_name, new_email)
+                    confirm = input("Are you sure you want to update the user's details? (y/n): ").strip().lower()
+                    if confirm in ("y","yes"):
+                        user.update_user(new_name, new_email)
+                        print("✅ User updated successfully: ")
+                    elif confirm in ("n", "no"):
+                        print("Thank you for your confirmation! 👍 The user details were not changed. ")
+                        continue  
+                    else:
+                        print("Invalid input! Try again with either (y/n) ")  
                 else: 
                     print("ℹ️ User not found")
             except ValueError:
@@ -196,12 +204,18 @@ def podcast_menu():
                     new_title = input("New title (Enter to skip): ").strip()
                     new_genre = input("New genre (Enter to skip): ").strip()
                     new_user_id = input("New user ID (Enter to skip): ").strip()
-                    podcast.update(
-                        title=new_title or None,
-                        genre=new_genre or None,
-                        user_id=int(new_user_id) if new_user_id else None
-                    )
-                    print("✅ Podcast updated.")
+                    confirm = input("Are you sure you want to Update the podcast details? (y/n): ").strip().lower()
+                    if confirm in ("y","yes"):
+                        podcast.update(
+                            title=new_title or None,
+                            genre=new_genre or None,
+                            user_id=int(new_user_id) if new_user_id else None
+                        )
+                        print("✅ Podcast Updated successfully")
+                    elif confirm in ("n", "no"):    
+                        print("Thank you for your confirmation! The podcast details were not changed. ")
+                    else:
+                        print("ℹ️ Invalid input. Please try again with either (y/n) ")    
                 else:
                     print("ℹ️ Podcast not found.")
             except ValueError:
