@@ -59,19 +59,27 @@ def user_menu():
 
         elif choice == "3":
             try:
-                user_id = int(input("Enter user ID: "))
-                user = User.find_by_id(user_id)
-                
-                if user:
-                    if user.podcasts:
-                        table = [[p.id, p.title, p.genre] for p in user.podcasts]
-                        print(tabulate(table, headers=["ID", "Title", "Genre"], tablefmt="fancy_grid"))
-                    else:
-                        print("ℹ️ This user has no podcasts.")
+                podcast_id = int(input("Enter podcast ID: "))
+                podcast = Podcast.find_by_id(podcast_id)
+        
+                if podcast:
+            # Create a table with one row containing podcast details
+                    table = [[
+                    podcast.id,
+                    podcast.title,
+                    podcast.genre,
+                    podcast.user_id
+                ]]
+                    print(tabulate(table, 
+                         headers=["ID", "Title", "Genre", "User ID"],
+                         tablefmt="fancy_grid"))
                 else:
-                    print("ℹ️ User not found.")
+                    print(f"❌ No podcast found with ID {podcast_id}")
+            
             except ValueError:
-                print("ℹ️ Invalid ID.")
+                print("❌ Invalid input. Please enter a numeric podcast ID.")
+            except Exception as e:
+                print(f"❌ An error occurred: {e}")
 
 
         elif choice == "4":
@@ -142,10 +150,10 @@ def podcast_menu():
     while True:
         print("\n🎙 Podcast Menu")
         print("1. Create Podcast")
-        print("2. Delete Podcast")
-        print("3. View All Podcasts")
-        print("4. Find Podcast by ID")
-        print("5. Update Podcast")
+        print("2. View All Podcasts")
+        print("3. Find Podcast by ID")
+        print("4. Update Podcast")
+        print("5. Delete Podcast")
         print("6. Back to Main Menu")
 
         choice = input("Choose an option (1-6): ").strip()
@@ -162,24 +170,9 @@ def podcast_menu():
             except Exception as e:
                 print(f"ℹ️ Error: {e}")
 
-        elif choice == "2":
-            try:
-                podcast_id = int(input("Enter podcast ID to delete: "))
-                confirm = input(f"Are you sure you want to delete Podcast? y/n: ").strip().lower()
-                if confirm == "y" or confirm == "yes":
-                    if Podcast.delete_by_id(podcast_id):
-                        print("✅ Podcast deleted.")
-                    else:
-                        print("ℹ️ Podcast not found.")
-                elif confirm == "n" or confirm == "no":
-                    print("Thank you for your confirmation 👍. The podcast was not deleted!")      
-                    continue
-                else:
-                    print("Please enter y or n")      
-            except ValueError:
-                print("ℹ️ Invalid podcast ID.")
+       
 
-        elif choice == "3":
+        elif choice == "2":
             podcasts = Podcast.get_all()
             if podcasts:
                 table = [[p.id, p.title, p.genre, p.user_id] for p in podcasts]
@@ -187,15 +180,19 @@ def podcast_menu():
             else:
                 print("ℹ️ No podcasts found.")
 
-        elif choice == "4":
+        elif choice == "3":
             try:
                 podcast_id = int(input("Enter podcast ID: "))
                 podcast = Podcast.find_by_id(podcast_id)
-                print(podcast if podcast else "ℹ️ Podcast not found.")
+                if podcast:
+                    table = [[podcast.id, podcast.title, podcast.genre, podcast.user_id]]
+                    print(tabulate(table, headers=["ID", "Title", "Genre", "User_ID"], tablefmt="fancy_grid"))
+                else:
+                    print("ℹ️ Podcast not found.")
             except ValueError:
                 print("ℹ️ Invalid podcast ID.")
 
-        elif choice == "5":
+        elif choice == "4":
             try:
                 podcast_id = int(input("Enter podcast ID to edit: "))
                 podcast = Podcast.find_by_id(podcast_id)
@@ -220,6 +217,24 @@ def podcast_menu():
                     print("ℹ️ Podcast not found.")
             except ValueError:
                 print("ℹ️ Invalid ID.")
+
+        elif choice == "5":
+            try:
+                podcast_id = int(input("Enter podcast ID to delete: "))
+                confirm = input(f"Are you sure you want to delete Podcast? y/n: ").strip().lower()
+                if confirm == "y" or confirm == "yes":
+                    if Podcast.delete_by_id(podcast_id):
+                        print("✅ Podcast deleted.")
+                    else:
+                        print("ℹ️ Podcast not found.")
+                elif confirm == "n" or confirm == "no":
+                    print("Thank you for your confirmation 👍. The podcast was not deleted!")      
+                    continue
+                else:
+                    print("Please enter y or n")      
+            except ValueError:
+                print("ℹ️ Invalid podcast ID.") 
+
 
         elif choice == "6":
             break

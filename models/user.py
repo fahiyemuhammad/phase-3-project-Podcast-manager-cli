@@ -10,6 +10,7 @@ class User(Base):
     name = Column(String, nullable=False)
     email = Column(String, unique=True, nullable=False)
 
+
     def __repr__(self):
         return f"<User(id = {self.id}, name = '{self.name}', email = '{self.email}')>"
     
@@ -30,6 +31,22 @@ class User(Base):
         return user
     
     @classmethod
+    def find_by_name(cls,name):
+        user = session.query(cls).filter_by(name=name).first()
+        return user
+    
+    @classmethod
+    def get_password(cls,password):
+        password = session.query(cls).filter_by(password = password)
+        return password
+    
+    @classmethod
+    def get_email(cls,email):
+        email = session.query(cls).filter_by(email=email)
+        return email
+        
+    
+    @classmethod
     def delete_by_id(cls,user_id):
         user = cls.find_by_id(user_id)
         if user:
@@ -37,6 +54,9 @@ class User(Base):
             session.commit()
             return True
         return False
+    
+   
+
     
     def email_provider(self):
         return self.email.split('@')[-1] if '@' in self.email else None
